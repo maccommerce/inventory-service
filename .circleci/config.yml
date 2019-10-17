@@ -22,14 +22,18 @@ jobs:
       - restore_cache:
           key: inventory-service-{{ checksum "pom.xml" }}
 
-      - run: mvn dependency:go-offline
+      - run:
+          name: Fetching dependencies
+          command: mvn dependency:go-offline
 
       - save_cache:
           paths:
             - ~/.m2
           key: inventory-service-{{ checksum "pom.xml" }}
 
-      - run: mvn package
+      - run:
+          name: Run build and tests
+          command: mvn package
 
       - store_test_results:
           path: target/surefire-reports
