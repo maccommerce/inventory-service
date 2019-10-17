@@ -32,7 +32,7 @@ jobs:
           key: inventory-service-{{ checksum "pom.xml" }}
 
       - run:
-          name: Run build and tests
+          name: Running build and tests
           command: mvn package
 
       - store_test_results:
