@@ -19,6 +19,7 @@
 		<java.version>1.8</java.version>
 		<flyway.version>6.0.0</flyway.version>
 		<junit-jupiter.version>5.5.2</junit-jupiter.version>
+		<retrofit.version>2.6.1</retrofit.version>
 	</properties>
 
 	<dependencies>
@@ -53,6 +54,12 @@
 			<artifactId>junit-jupiter-engine</artifactId>
 			<version>${junit-jupiter.version}</version>
 			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>io.azam.ulidj</groupId>
+			<artifactId>ulidj</artifactId>
+			<version>1.0.0</version>
 		</dependency>
 
 		<dependency>
@@ -94,9 +101,22 @@
 			<artifactId>lombok</artifactId>
 			<scope>provided</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>com.squareup.retrofit2</groupId>
+			<artifactId>retrofit</artifactId>
+			<version>${retrofit.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.squareup.retrofit2</groupId>
+			<artifactId>converter-jackson</artifactId>
+			<version>${retrofit.version}</version>
+		</dependency>
 	</dependencies>
 
 	<build>
+		<finalName>${project.name}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
