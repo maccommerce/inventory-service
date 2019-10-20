@@ -32,7 +32,9 @@ import java.util.stream.Collectors;
         return productRepository.findById(inventory.getProduct().getId())
                 .map(product -> {
                     inventory.setId(ULID.random());
-                    return inventoryRepository.save(inventory);
+                    Inventory saved = inventoryRepository.save(inventory);
+                    saved.setProduct(product);
+                    return saved;
                 })
                 .orElseThrow(() -> {
                     log.error(
@@ -44,34 +46,27 @@ import java.util.stream.Collectors;
     }
 
     @Override @Transactional public Inventory update(String id, Inventory inventory) {
-        return inventoryRepository.save(
-                inventoryRepository.findById(id)
-                        .map(inventoryFromDb -> {
-                            inventory.setId(id);
-
-                            String productId = inventory.getProduct().getId();
-                            String productIdFromDb = inventoryFromDb.getProduct().getId();
-
-                            if(!productIdFromDb.equals(productId)) {
-                                return productRepository.findById(inventory.getProduct().getId())
-                                        .map(product -> {
-                                            inventory.setProduct(product);
-                                            return inventory;
-                                        })
-                                        .orElseThrow(() -> {
-                                            log.error(
-                                                    "Unable to save inventory because was not possible to get product for id = {}.",
-                                                    inventory.getProduct().getId()
-                                            );
-                                            return new ProductNotFoundException(inventory.getProduct().getId());
-                                        });
-                            } else return inventory;
-                        })
-                        .orElseThrow(() -> {
-                            log.error("Inventory with id = {} was not found.", id);
-                            return new InventoryNotFoundException(id);
-                        })
-        );
+        return inventoryRepository.findById(id)
+                .map(inventoryFromDb -> {
+                    inventory.setId(id);
+                    return productRepository.findById(inventory.getProduct().getId())
+                            .map(product -> {
+                                Inventory updated = inventoryRepository.save(inventory);
+                                updated.setProduct(product);
+                                return updated;
+                            })
+                            .orElseThrow(() -> {
+                                log.error(
+                                        "Unable to save inventory because was not possible to get product for id = {}.",
+                                        inventory.getProduct().getId()
+                                );
+                                return new ProductNotFoundException(inventory.getProduct().getId());
+                            });
+                })
+                .orElseThrow(() -> {
+                    log.error("Inventory with id = {} was not found.", id);
+                    return new InventoryNotFoundException(id);
+                });
     }
 
     @Override @Transactional public void delete(String id) {

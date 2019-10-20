@@ -10,7 +10,7 @@ public @Data class Product {
     private Double price;
     private Category category;
 
-    private static @Data class Category {
+    public static @Data class Category {
 
         private String id;
         private String name;
