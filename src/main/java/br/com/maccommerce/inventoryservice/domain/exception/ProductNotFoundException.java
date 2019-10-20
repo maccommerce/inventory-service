@@ -1,13 +1,12 @@
 package br.com.maccommerce.inventoryservice.domain.exception;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
-
-@ResponseStatus(HttpStatus.NOT_FOUND)
-public class ProductNotFoundException extends RuntimeException {
+public class ProductNotFoundException extends ApiException {
 
     public ProductNotFoundException(String id) {
-        super("Product with id = " + id + " was not found.");
+        super(
+                ApiExceptionType.NOT_FOUND,
+                "Product with id = " + id + " was not found."
+        );
     }
 
 }
