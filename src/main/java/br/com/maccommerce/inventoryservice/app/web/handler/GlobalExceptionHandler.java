@@ -41,7 +41,7 @@ public class GlobalExceptionHandler {
                 .body(response);
     }
 
-    private static @Data class ApiExceptionResponse {
+    public static @Data class ApiExceptionResponse {
 
         private String type;
         private String message;

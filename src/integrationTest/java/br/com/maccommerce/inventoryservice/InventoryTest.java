@@ -47,8 +47,8 @@ public class InventoryTest {
     private static DatabaseMock databaseMock;
 
     @BeforeAll static void init() throws IOException {
-        productService = ProductServiceMock.startServer();
-        databaseMock = DatabaseMock.startServer();
+        productService = new ProductServiceMock();
+        databaseMock = new DatabaseMock();
     }
 
     @BeforeEach void beforeEach() {
@@ -240,7 +240,7 @@ public class InventoryTest {
 
         @Test
         @DisplayName("should save a new inventory")
-        void saveWithSuccess() throws Exception {
+        void saveSuccessfully() throws Exception {
             Product product = ProductMock.getOne();
             Inventory inventory = InventoryMock.getOne(product);
 
@@ -292,7 +292,7 @@ public class InventoryTest {
 
         @Test
         @DisplayName("should update a inventory")
-        void updateWithSuccess() throws Exception {
+        void updateSuccessfully() throws Exception {
             Product product = ProductMock.getOne();
             Inventory inventory = InventoryMock.getOne(product);
 

@@ -15,22 +15,13 @@ import java.util.Objects;
 
 public class ProductServiceMock {
 
-    private static ProductServiceMock INSTANCE;
-
     private final ObjectMapper mapper;
     private final MockWebServer server;
 
-    private ProductServiceMock() throws IOException {
+    public ProductServiceMock() throws IOException {
         this.mapper = new ObjectMapper();
         this.server = new MockWebServer();
-        server.start(7000);
-    }
-
-    public static ProductServiceMock startServer() throws IOException {
-        if(INSTANCE == null) {
-            INSTANCE = new ProductServiceMock();
-        }
-        return INSTANCE;
+        this.server.start(7000);
     }
 
     public void stopServer() throws IOException {
@@ -51,6 +42,20 @@ public class ProductServiceMock {
                 } catch (JsonProcessingException e) {
                     return new MockResponse().setResponseCode(404);
                 }
+            }
+        };
+
+        server.setDispatcher(dispatcher);
+    }
+
+    public void dispatchServerError(Product product) {
+        Dispatcher dispatcher = new Dispatcher() {
+            @NotNull @Override public MockResponse dispatch(@NotNull RecordedRequest recordedRequest) {
+                String endpoint = "/products/" + product.getId();
+                if (endpoint.equals(Objects.requireNonNull(recordedRequest.getPath()))) {
+                    return new MockResponse().setResponseCode(500);
+                }
+                return new MockResponse().setResponseCode(HttpStatus.NOT_FOUND.value());
             }
         };
 

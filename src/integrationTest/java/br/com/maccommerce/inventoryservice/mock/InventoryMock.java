@@ -15,4 +15,16 @@ public final class InventoryMock {
         return inventory;
     }
 
+    public static Inventory getOne() {
+        Product product = new Product();
+        product.setId(ULID.random());
+
+        Inventory inventory = new Inventory();
+        inventory.setId(ULID.random());
+        inventory.setProduct(product);
+        inventory.setAmount(100L);
+        inventory.setDescription("Test");
+        return inventory;
+    }
+
 }
