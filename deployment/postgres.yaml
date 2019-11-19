@@ -1,0 +1,79 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: inventory-service-db-secrets
+type: Opaque
+data:
+  db_pass: cGdwYXNz
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: inventory-service-db-pv-claim
+  labels:
+    app: inventory-service-db
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inventory-service-db
+  labels:
+    app: inventory-service-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: inventory-service-db
+  template:
+    metadata:
+      labels:
+        app: inventory-service-db
+      name: inventory-service-db
+    spec:
+      containers:
+        - name: inventory-service-db
+          image: postgres:9.6
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: inventory-service-db-volume
+          env:
+            - name: PGDATA
+              value: "/var/lib/postgresql/data/pgdata"
+            - name: DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: inventory-service-db-secrets
+                  key: db_pass
+      volumes:
+        - name: inventory-service-db-volume
+          persistentVolumeClaim:
+            claimName: inventory-service-db-pv-claim
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: inventory-service-db
+  labels:
+    app: inventory-service-db
+spec:
+  type: NodePort
+  ports:
+  - port: 5432
+    protocol: TCP
+  selector:
+    app: inventory-service-db

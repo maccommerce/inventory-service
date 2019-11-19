@@ -1,0 +1,53 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: inventory-service
+  labels:
+    app: inventory-service
+spec:
+  ports:
+  - port: 7010
+    name: http
+  selector:
+    app: inventory-service
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inventory-service
+  labels:
+    app: inventory-service
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: inventory-service
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: inventory-service
+        version: v1
+      name: inventory-service
+    spec:
+      containers:
+        - name: inventory-service
+          image: maccommerce/inventory-service:latest
+          ports:
+            - containerPort: 7010
+          env:
+            - name: APPLICATION_ENVIRONMENT
+              value: prod
+            - name: APPLICATION_PORT
+              value: "7010"
+            - name: PRODUCT_SERVICE_URL
+              value: http://product-service:7000
+            - name: JDBC_DATABASE_URL
+              value: jdbc:postgresql://inventory-service-db:5432/inventory_service_db
+            - name: JDBC_DATABASE_USERNAME
+              value: postgres
+            - name: JDBC_DATABASE_PASSWORD
+              value: cGdwYXNz
